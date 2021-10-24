@@ -136,7 +136,7 @@ export default function Body() {
       PatientID: typeof pats.ID === "string" ? parseInt(pats.ID) : NaN,
       UserID: typeof pats.ID === "string" ? parseInt(pats.ID) : 1,
       TreatmentID: typeof pats.ID === "string" ? parseInt(pats.ID) : NaN,
-      Todo: pats.note ?? "",
+      Todo: pats.Note ?? "",
       AppointTime: AddedTime
     };
     console.log("Data", data)
@@ -257,7 +257,7 @@ export default function Body() {
           inputProps={{
             name: "note",
           }}
-          value={pats.note}
+          value={pats.Note}
           id="note"
           label=""
           variant="outlined"

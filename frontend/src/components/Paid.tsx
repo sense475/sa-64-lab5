@@ -97,7 +97,7 @@ function WatchPaidList() {
                                     <TableCell align="left">{pats.User.UserName}</TableCell>
                                     <TableCell align="left">{pats.price}</TableCell>
                                     <TableCell align="left">{moment(pats.Paytime).format("YYYY-MMDDTHH:mm")}</TableCell>
-                                    <TableCell align="left">{pats.note}</TableCell>
+                                    <TableCell align="left">{pats.Note}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
