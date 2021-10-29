@@ -12,6 +12,7 @@ import { UsersInterface } from "../models/IUser";
 import { TreatmentInterface } from "../models/ITreatment";
 import { PatientInterface } from "../models/IPatient";
 import { PaymentInterface } from "../models/IPayment";
+import { RemedyInterface } from "../models/IRemedy";
 import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import Snackbar from "@material-ui/core/Snackbar";
@@ -38,7 +39,7 @@ export default function Body() {
   ) => {
     const name = event.target.name as keyof typeof pats
     console.log("Name", name)
-    setAppoint({
+    setPaid({
       ...pats,
       [name]: event.target.value,
     });
@@ -49,7 +50,10 @@ export default function Body() {
     const apiUrl = "http://localhost:8080/patients";
     const requestOptions = {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
     };
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
@@ -62,13 +66,56 @@ export default function Body() {
         }
       });
   }
-  //ดึงข้อมูลแพทย์
+     //real useronline
+     const [Useronline, setUseronline] = React.useState<UsersInterface>();
+
+     function getUseronline() {
+         const UserID = localStorage.getItem("uid")
+         const apiUrl = `http://localhost:8080/users/${UserID}`;
+ 
+         const requestOptions = {
+ 
+             method: "GET",
+ 
+             headers: {
+                 Authorization: `Bearer ${localStorage.getItem("token")}`,
+                 "Content-Type": "application/json",
+             },
+ 
+ 
+         };
+ 
+         fetch(apiUrl, requestOptions)
+ 
+             .then((response) => response.json())
+ 
+             .then((res) => {
+                 console.log("Combobox_Useronline", res)
+ 
+                 if (res.data) {
+ 
+                     setUseronline(res.data);
+ 
+                 } else {
+ 
+                     console.log("else");
+ 
+                 }
+ 
+             });
+ 
+     }
+ 
+  //ดึงข้อมูลเจ้าหน้าที่
   const [users, setUser] = React.useState<UsersInterface[]>([]);
   function getUser() {
     const apiUrl = "http://localhost:8080/users";
     const requestOptions = {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
     };
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
@@ -82,19 +129,22 @@ export default function Body() {
       });
   }
   //ดึงข้อมูลเหตุที่นัด
-  const [treatmentt, setTreatment] = React.useState<TreatmentInterface[]>([]);
-  function gettreatment() {
-    const apiUrl = "http://localhost:8080/treatments";
+  const [remedytype, setRemedytype] = React.useState<RemedyInterface []>([]);
+  function getremedytype() {
+    const apiUrl = "http://localhost:8080/remedy_types";
     const requestOptions = {
       method: "GET",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
     };
     fetch(apiUrl, requestOptions)
       .then((response) => response.json())
       .then((res) => {
-        console.log("Combobox_treatment", res)
+        console.log("Combobox_remedy", res)
         if (res.data) {
-          setTreatment(res.data);
+          setRemedytype(res.data);
         } else {
           console.log("else");
         }
@@ -104,14 +154,15 @@ export default function Body() {
   useEffect(() => {
     getPatient();
     getUser();
-    gettreatment();
+    getremedytype();
+   
   }, []);
   const [AddedTime, setAddedTime] = React.useState<Date | null>(new Date());
   const handleAddedTime = (date: Date | null) => {
     setAddedTime(date);
   }
   //สร้างข้อมูล
-  const [pats, setAppoint] = React.useState<Partial<PaymentInterface>>({});
+  const [pats, setPaid] = React.useState<Partial<PaymentInterface>>({});
   const [success, setSuccess] = React.useState(false);
   const [error, setError] = React.useState(false);
   const handleClose = (event?: React.SyntheticEvent, reason?: string) => {
@@ -128,22 +179,26 @@ export default function Body() {
     const { value } = event.target;
     console.log("Value", value)
     console.log("ID", id)
-    setAppoint({ ...pats, [id]: value });
+    setPaid({ ...pats, [id]: value });
   };
   const [ErrorMessage, setErrorMessage] = React.useState<String>();
   function submit() {
     let data = {
-      PatientID: typeof pats.ID === "string" ? parseInt(pats.ID) : NaN,
-      UserID: typeof pats.ID === "string" ? parseInt(pats.ID) : 1,
-      TreatmentID: typeof pats.ID === "string" ? parseInt(pats.ID) : NaN,
-      Todo: pats.Note ?? "",
-      AppointTime: AddedTime
+      PatientID: typeof pats.PatientID === "string" ? parseInt(pats.PatientID) : NaN,
+      UserFinancialID: typeof pats.UserFinancialID === "string" ? parseInt(pats.UserFinancialID) : NaN,
+      RemedytypeID: typeof pats.PatientID === "string" ? parseInt(pats.PatientID) : NaN,
+      Note: pats.Note ?? "",
+      PayTime: AddedTime,
+      Price: typeof pats.Price === "string" ? parseInt(pats.Price) : NaN,
     };
     console.log("Data", data)
     const apiUrl = "http://localhost:8080/payments";
     const requestOptions = {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        "Content-Type": "application/json",
+      },
       body: JSON.stringify(data),
     };
     fetch(apiUrl, requestOptions)
@@ -203,7 +258,7 @@ export default function Body() {
             </option>
             {patients.map((item: PatientInterface) => (
               <option value={item.ID} key={item.ID}>
-                {item.PatientName}
+                {item.Firstname} {item.Lastname}
               </option>
             ))}
            </Select>
@@ -213,18 +268,18 @@ export default function Body() {
         <FormControl fullWidth variant="outlined" style={{ width: 425 }}>
           <p>ผู้รับเงิน</p>
           <Select
-            native
-            value={pats.UserID}
+        
+          native
+            value={pats.UserFinancialID}
             onChange={handleChange}
             inputProps={{
-              name: "UserID",
+              name: "UserFinancialID",
             }}
           >
-            <option aria-label="None" value="" >
-            </option>
+
             {users.map((item: UsersInterface) => (
               <option value={item.ID} key={item.ID}>
-                {item.UserName}
+                {item.Name}
               </option>
             ))}
           </Select>
@@ -243,7 +298,7 @@ export default function Body() {
           >
             <option aria-label="None" value="" >
             </option>
-            {treatmentt.map((item: TreatmentInterface) => (
+            {remedytype.map((item: RemedyInterface) => (
               <option value={item.ID} key={item.ID}>
                 {item.Name}
               </option>
@@ -255,10 +310,10 @@ export default function Body() {
         <p>หมายเหตุ</p>
         <TextField style={{ width: 425 }}
           inputProps={{
-            name: "note",
+            name: "Note",
           }}
           value={pats.Note}
-          id="note"
+          id="Note"
           label=""
           variant="outlined"
           type="string"
@@ -283,13 +338,13 @@ export default function Body() {
         <p>ราคา</p>
         <TextField style={{ width: 425 }}
           inputProps={{
-            name: "note",
+            name: "Price",
           }}
-          value={pats.price}
-          id="note"
+          value={pats.Price}
+          id="Price"
           label=""
           variant="outlined"
-          type="string"
+          type="number"
           size="medium"
           onChange={handleChange}
         />
@@ -306,9 +361,10 @@ export default function Body() {
       </Grid>
       <Button style={{ float: "right" }}
               component={RouterLink}
-              to="/back"
+              to="/list"
               variant="contained"
-              color="primary">
+              color="primary"
+              >
               ประวัติการชำระเงิน
             </Button>
     </Grid>

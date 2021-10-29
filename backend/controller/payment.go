@@ -11,8 +11,8 @@ import (
 func CreatePayment(c *gin.Context) {
 
 	var payment entity.Payment
-	var user entity.User
-	var treatment entity.Treatment
+	var userfinancial entity.User
+	var remedytype entity.RemedyType
 	var patient entity.Patient
 
 	// ผลลัพธ์ที่ได้จากขั้นตอนที่ 7 จะถูก bind เข้าตัวแปร payment
@@ -22,8 +22,8 @@ func CreatePayment(c *gin.Context) {
 	}
 
 	// 8: ค้นหา video ด้วย id
-	if tx := entity.DB().Where("id = ?", payment.TreatmentID).First(&treatment); tx.RowsAffected == 0 {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Treatment not found"})
+	if tx := entity.DB().Where("id = ?", payment.RemedyTypeID).First(&remedytype); tx.RowsAffected == 0 {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Remedy not found"})
 		return
 	}
 
@@ -33,17 +33,24 @@ func CreatePayment(c *gin.Context) {
 		return
 	}
 
-	// 10: ค้นหา playlist ด้วย id
-	if tx := entity.DB().Where("id = ?", payment.UserID).First(&user); tx.RowsAffected == 0 {
+	// 10: ค้นหา user ด้วย id
+	if tx := entity.DB().Where("id = ?", payment.UserFinancialID).First(&userfinancial); tx.RowsAffected == 0 {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "user not found"})
+		return
+	}
+	entity.DB().Joins("Role").Find(&userfinancial)
+	// 13: ตรวจสอบ Role ของ user
+	if userfinancial.Role.Name != "Financial officer" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only Nurses"})
 		return
 	}
 	// 11: สร้าง Payment
 	wv := entity.Payment{
-		User:  user,             // โยงความสัมพันธ์กับ Entity User
-		Treatment:       treatment,                  // โยงความสัมพันธ์กับ Entity Treatment
+		UserFinancial :  userfinancial,             // โยงความสัมพันธ์กับ Entity User
+		RemedyType:       remedytype,                  // โยงความสัมพันธ์กับ Entity Treatment
 		Patient:    patient,               // โยงความสัมพันธ์กับ Entity Patient
 		Price:	payment.Price,		//ตั้งค่าฟิลด์ price
+		Note: payment.Note,       //ตั้งค่าฟิลด์Note
 		Paytime: payment.Paytime, // ตั้งค่าฟิลด์ paytimeTime
 	}
 
@@ -59,7 +66,7 @@ func CreatePayment(c *gin.Context) {
 func GetPayment(c *gin.Context) {
 	var payment entity.Payment
 	id := c.Param("id")
-	if err := entity.DB().Preload("User").Preload("Patient").Preload("Treatment").Raw("SELECT * FROM payment WHERE id = ?", id).Find(&payment).Error; err != nil {
+	if err := entity.DB().Preload("UserFinancial").Preload("Patient").Preload("RemedyType").Raw("SELECT * FROM payments WHERE id = ?", id).Find(&payment).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}
@@ -69,7 +76,7 @@ func GetPayment(c *gin.Context) {
 // GET /payments
 func ListPayment(c *gin.Context) {
 	var payments []entity.Payment
-	if err := entity.DB().Preload("User").Preload("Patient").Preload("Treatment").Raw("SELECT * FROM payment").Find(&payments).Error; err != nil {
+	if err := entity.DB().Preload("UserFinancial").Preload("Patient").Preload("RemedyType").Raw("SELECT * FROM payments").Find(&payments).Error; err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 		return
 	}

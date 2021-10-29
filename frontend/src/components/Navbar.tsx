@@ -27,6 +27,11 @@ const useStyles = makeStyles((theme: Theme) =>
  },
  }),
 );
+const signout = () => {
+  localStorage.clear();
+  window.location.href = "/";
+};
+
 export default function ButtonAppBar() {
   const classes = useStyles();
   return (
@@ -37,13 +42,13 @@ export default function ButtonAppBar() {
           <Typography variant="h5" className={classes.title}>
           ระบบบันทึกการชำระเงิน
           </Typography>
-          <Button color="inherit">Logout</Button>
+          <Button color="inherit"
+           onClick={signout}
+           >Logout</Button>
           <Grid item xs={1}>
           <Avatar src="/broken-image.jpg" className={classes.small}/>
           </Grid>
-          <Grid item xs={1}>
-          <p>เจ้าหน้าที่การเงิน</p>
-          </Grid>
+          
         </Toolbar>
       </AppBar>
     </div>

@@ -1,16 +1,16 @@
 import { UsersInterface } from "./IUser";
-import { TreatmentInterface } from "./ITreatment";
 import { PatientInterface } from "./IPatient";
+import { RemedyInterface } from "../models/IRemedy";
 export interface PaymentInterface {
     ID: number,
-    price: number,
-    note: String,
-    UserID: number,
-    User: UsersInterface,
+    Price: number,
+    Note: String,
+    UserFinancialID: number,
+    UserFinancial: UsersInterface,
     PatientID: number,
     Patient: PatientInterface,
-    TreatmentID: number,
-    Treatment: TreatmentInterface,
+    RemedyTypeID: number,
+    RemedyType: RemedyInterface,
 
     Paytime: Date,
 }

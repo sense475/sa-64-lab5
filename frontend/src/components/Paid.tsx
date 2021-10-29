@@ -28,7 +28,10 @@ function WatchPaidList() {
         const apiUrl = "http://localhost:8080/payments";
         const requestOptions = {
             method: "GET",
-            headers: { "Content-Type": "application/json" },
+            headers: {
+                Authorization: `Bearer ${localStorage.getItem("token")}`,
+                "Content-Type": "application/json",
+              },
         };
         fetch(apiUrl, requestOptions)
             .then((response) => response.json())
@@ -61,7 +64,7 @@ function WatchPaidList() {
                     <Box>
                         <Button
                             component={RouterLink}
-                            to=""
+                            to="/"
                             variant="contained"
                             color="primary"
                         >
@@ -73,19 +76,25 @@ function WatchPaidList() {
                     <Table className={classes.table} aria-label="simple table">
                         <TableHead>
                             <TableRow>
-                                <TableCell align="center" width="20%">
+                            <TableCell align="center" width="14%">
+                                    ลำดับ
+                                </TableCell>
+                                <TableCell align="center" width="14%">
                                     ผู้ป่วย
                                 </TableCell>
-                                <TableCell align="left" width="20%">
+                                <TableCell align="left" width="14%">
                                     ผู้รับเงิน
                                 </TableCell>
-                                <TableCell align="left" width="20%">
+                                <TableCell align="left" width="14%">
                                     ราคา
                                 </TableCell>
-                                <TableCell align="left" width="20%">
+                                <TableCell align="left" width="14%">
                                     วันที่จ่าย
                                 </TableCell>
-                                <TableCell align="left" width="20%">
+                                <TableCell align="left" width="14%">
+                                    อาการ
+                                </TableCell>
+                                <TableCell align="left" width="14%">
                                     หมายเหตุ
                                 </TableCell>
                             </TableRow>
@@ -93,10 +102,12 @@ function WatchPaidList() {
                         <TableBody>
                             {pats.map((pats: PaymentInterface) => (
                                 <TableRow key={pats.ID}>
-                                    <TableCell align="left">{pats.Patient.PatientName}</TableCell>
-                                    <TableCell align="left">{pats.User.UserName}</TableCell>
-                                    <TableCell align="left">{pats.price}</TableCell>
-                                    <TableCell align="left">{moment(pats.Paytime).format("YYYY-MMDDTHH:mm")}</TableCell>
+                                    <TableCell align="left">{pats.ID}</TableCell>
+                                    <TableCell align="left">{pats.Patient.Firstname}</TableCell>
+                                    <TableCell align="left">{pats.UserFinancial.Name}</TableCell>
+                                    <TableCell align="left">{pats.Price}</TableCell>
+                                    <TableCell align="left">{moment(pats.Paytime).format("dd MMMM yyyy hh:mm a")}</TableCell>
+                                    <TableCell align="left">{pats.RemedyType.Name}</TableCell>
                                     <TableCell align="left">{pats.Note}</TableCell>
                                 </TableRow>
                             ))}
