@@ -66,7 +66,7 @@ export default function Body() {
         }
       });
   }
-     //real useronline
+     //real useronline 
      const [Useronline, setUseronline] = React.useState<UsersInterface>();
 
      function getUseronline() {
@@ -128,7 +128,7 @@ export default function Body() {
         }
       });
   }
-  //ดึงข้อมูลเหตุที่นัด
+  //ดึงข้อมูลอาการที่มารักษา
   const [remedytype, setRemedytype] = React.useState<RemedyInterface []>([]);
   function getremedytype() {
     const apiUrl = "http://localhost:8080/remedy_types";
@@ -155,6 +155,7 @@ export default function Body() {
     getPatient();
     getUser();
     getremedytype();
+    getUseronline();
    
   }, []);
   const [AddedTime, setAddedTime] = React.useState<Date | null>(new Date());
@@ -185,8 +186,8 @@ export default function Body() {
   function submit() {
     let data = {
       PatientID: typeof pats.PatientID === "string" ? parseInt(pats.PatientID) : NaN,
-      UserFinancialID: typeof pats.UserFinancialID === "string" ? parseInt(pats.UserFinancialID) : NaN,
-      RemedytypeID: typeof pats.PatientID === "string" ? parseInt(pats.PatientID) : NaN,
+      UserFinancialID:  Number(localStorage.getItem("uid")),
+      RemedytypeID: typeof pats.RemedyTypeID === "string" ? parseInt(pats.RemedyTypeID) : NaN,
       Note: pats.Note ?? "",
       PayTime: AddedTime,
       Price: typeof pats.Price === "string" ? parseInt(pats.Price) : NaN,
@@ -268,18 +269,14 @@ export default function Body() {
         <FormControl fullWidth variant="outlined" style={{ width: 425 }}>
           <p>ผู้รับเงิน</p>
           <Select
-        
           native
-            value={pats.UserFinancialID}
-            onChange={handleChange}
-            inputProps={{
-              name: "UserFinancialID",
-            }}
+          disabled
+            
           >
 
             {users.map((item: UsersInterface) => (
-              <option value={item.ID} key={item.ID}>
-                {item.Name}
+              <option >
+                {Useronline?.Name}
               </option>
             ))}
           </Select>
@@ -290,10 +287,10 @@ export default function Body() {
           <p>อาการ</p>
           <Select
             native
-            value={pats.ID}
+            value={pats.RemedyTypeID}
             onChange={handleChange}
             inputProps={{
-              name: "ID",
+              name: "RemedyTypeID",
             }}
           >
             <option aria-label="None" value="" >
@@ -321,20 +318,7 @@ export default function Body() {
           onChange={handleChange}
         />
       </Grid>
-      <Grid item xs={6}>
-        <FormControl style={{ float: "right", width: 400, marginRight: 27 }} variant="outlined">
-          <p>วันและเวลาที่จ่าย</p>
-          <MuiPickersUtilsProvider utils={DateFnsUtils}>
-            <KeyboardDateTimePicker
-              name="PayTime"
-              value={AddedTime}
-              onChange={handleAddedTime}
-              minDate={new Date("2018-01-01T00:00")}
-              format="yyyy/MM/dd hh:mm a"
-            />
-          </MuiPickersUtilsProvider>
-        </FormControl>
-        <Grid item xs={6} >
+      <Grid item xs={6} >
         <p>ราคา</p>
         <TextField style={{ width: 425 }}
           inputProps={{
@@ -349,6 +333,20 @@ export default function Body() {
           onChange={handleChange}
         />
       </Grid>
+      <Grid item xs={6}>
+        <FormControl style={{ float: "right", width: 400, marginRight: 27 }} variant="outlined">
+          <p>วันและเวลาที่จ่าย</p>
+          <MuiPickersUtilsProvider utils={DateFnsUtils}>
+            <KeyboardDateTimePicker
+              name="PayTime"
+              value={AddedTime}
+              onChange={handleAddedTime}
+              minDate={new Date("2018-01-01T00:00")}
+              format="yyyy/MM/dd hh:mm a"
+            />
+          </MuiPickersUtilsProvider>
+        </FormControl>
+        
       </Grid>
       
       <Grid item xs={12}>
@@ -358,15 +356,18 @@ export default function Body() {
           onClick={submit} >
           บันทึก
         </Button>
-      </Grid>
-      <Button style={{ float: "right" }}
+        <Grid item xs={3} >
+        <Button style={{ float: "left" }}
               component={RouterLink}
               to="/list"
               variant="contained"
               color="primary"
               >
-              ประวัติการชำระเงิน
+            ประวัติการชำระเงิน
             </Button>
+            </Grid>
+      </Grid>
+      
     </Grid>
 </Paper >
 </Container >

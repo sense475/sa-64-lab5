@@ -103,7 +103,7 @@ function WatchPaidList() {
                             {pats.map((pats: PaymentInterface) => (
                                 <TableRow key={pats.ID}>
                                     <TableCell align="left">{pats.ID}</TableCell>
-                                    <TableCell align="left">{pats.Patient.Firstname}</TableCell>
+                                    <TableCell align="left">{pats.Patient.Firstname}{pats.Patient.Lastname}</TableCell>
                                     <TableCell align="left">{pats.UserFinancial.Name}</TableCell>
                                     <TableCell align="left">{pats.Price}</TableCell>
                                     <TableCell align="left">{moment(pats.Paytime).format("dd MMMM yyyy hh:mm a")}</TableCell>

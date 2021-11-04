@@ -41,7 +41,7 @@ func CreatePayment(c *gin.Context) {
 	entity.DB().Joins("Role").Find(&userfinancial)
 	// 13: ตรวจสอบ Role ของ user
 	if userfinancial.Role.Name != "Financial officer" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Only Nurses"})
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Only Financer"})
 		return
 	}
 	// 11: สร้าง Payment

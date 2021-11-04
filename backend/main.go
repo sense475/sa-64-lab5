@@ -24,11 +24,8 @@ func main() {
 		{
 	// User Routes
 	protected.GET("/users", controller.ListUser)
-	protected.GET("/user/financial/:id", controller.GetUserFinancial)
-	protected.GET("/user/dentistass", controller.GetUserDentistass)
-	protected.GET("/user/nurse", controller.GetUserNurse)
-	protected.GET("/user/pharmacist", controller.GetUserPharmacist)
-	protected.POST("/users", controller.CreateUser)
+	protected.GET("/users/:id", controller.GetUser)
+	protected.POST("/user", controller.CreateUser)
 
 
 	// Patient Routes

@@ -19,14 +19,16 @@ function Alert(props: AlertProps) {
 
 const useStyles = makeStyles((theme) => ({
   paper: {
-    marginTop: theme.spacing(8),
+    marginTop: theme.spacing(7),
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
   },
   avatar: {
-    margin: theme.spacing(1),
-    backgroundColor: theme.palette.secondary.main,
+    margin: theme.spacing(5),
+    height: theme.spacing(8),
+    width: theme.spacing(8),
+    backgroundColor: theme.palette.primary.main,
   },
   form: {
     width: "100%",
@@ -103,7 +105,7 @@ function SignIn() {
           Sign in
 
         </Typography>
-        *username:few, password:1234, role:Nurse*
+        *username:tanodom,password:1234,role:FinanceOfficer*
 
         <form className={classes.form} noValidate>
           <TextField
